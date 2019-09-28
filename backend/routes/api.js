@@ -51,6 +51,7 @@ router.get('/logged', auth, async (req, res) => {
 router.get('/login', passport.authenticate('google', { accessType: 'offline', prompt: 'consent' }));
 
 router.get('/logout', auth, async (req, res) => {
+  req.logout();
   req.session.destroy();
   res.send('false');
 });

@@ -1,9 +1,13 @@
 // require('./workers/Worker.js');
 const express = require('express');
+const redis = require('redis');
 const db = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+
+const client = redis.createClient();
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -34,6 +38,7 @@ app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(
   session({
+    store: new RedisStore({ client }),
     secret: 'Insert randomized text here',
     resave: false,
     saveUninitialized: false,

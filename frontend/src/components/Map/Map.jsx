@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import gmapsInit from '../utils/gmaps';
+import gmapsInit from '../../utils/gmaps';
 import axios from 'axios';
 class Map extends Component {
   constructor(props) {

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import NavBar from './components/navBar.jsx';
-import Map from './components/map.jsx';
+import NavBar from './components/Navbar/Navbar';
+import Map from './components/Map/Map';
+import Login from './components/Login/Login'
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { isUserLogin } from './redux/actions/actions.js';
+import { isUserLogin } from './redux/actions/userActions/actions.js';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -19,6 +20,7 @@ class App extends Component {
       <div id="app" className="vh-100">
         <NavBar />
         <Route name="api" path="/map" component={Map}></Route>
+        <Route name="login" path="/login" component={Login}></Route>
       </div>
     );
   }
@@ -27,8 +29,6 @@ class App extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     isUserLogin: ()=> dispatch(isUserLogin()),
-    // Никита - База данных
-    // setData: (data) => dispatch( dataAC(data) )
   };
 }
 
