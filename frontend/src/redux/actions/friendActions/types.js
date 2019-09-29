@@ -1,0 +1,1 @@
+export const SET_FRIEND_DATA = 'SET_FRIEND_DATA';

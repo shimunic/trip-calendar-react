@@ -8,6 +8,19 @@ const User = require('../models/User');
 
 const router = express.Router();
 
+function dismissProtectedFields(user) {
+  return {
+    _id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    photo: user.photo,
+    email: user.email,
+    group: user.group,
+    company: user.company,
+    website: user.website,
+  };
+}
+
 /* async function updateToken(req, res, next) {
   if (req.user) {
     if (req.user.tokenExpires > new Date(req.user.tokenExpires - 15 * 60)) {
@@ -34,15 +47,10 @@ const router = express.Router();
 
 router.use(updateToken); */
 router.get('/logged', auth, async (req, res) => {
-  const responce = {
-    _id: req.user._id,
-    firstName: req.user.firstName,
-    lastName: req.user.lastName,
-    photo: req.user.photo,
-    email: req.user.email,
-    group: req.user.group,
-  };
-  res.json(responce);
+  console.log(req.user)
+  console.log(dismissProtectedFields(req.user));
+  
+  res.json(dismissProtectedFields(req.user));
 });
 
 // строчка чтоб обновить токены
@@ -56,11 +64,23 @@ router.get('/logout', auth, async (req, res) => {
   res.send('false');
 });
 
-router.get('/user/:_id', auth, async (req, res) => {
-  const user = await User.findOne({ _id: req.params._id });
+router
+  .route('/user/:_id')
+  .get(auth, async (req, res) => {
+    const user = await User.findOne({ _id: req.params._id });
 
-  res.json(user);
-});
+    res.json(user);
+  })
+
+  .put(auth, async (req, res) => {
+    const { company, website } = req.body;
+    const user = await User.findOne({ _id: req.params._id });
+    user.company = company || user.company;
+    user.website = website || user.website;
+    console.log(user.company)
+    await user.save();
+    res.json(dismissProtectedFields(user));
+  });
 
 router.get('/timeline/:_id', auth, async (req, res) => {
   const user = await Timeline.find({ userId: req.params._id });

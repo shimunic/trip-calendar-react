@@ -4,6 +4,7 @@ import './App.css';
 import NavBar from './components/Navbar/Navbar';
 import Map from './components/Map/Map';
 import Login from './components/Login/Login'
+import UserPage from './components/UserPage/UserPage' 
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { isUserLogin } from './redux/actions/userActions/actions.js';
@@ -21,6 +22,7 @@ class App extends Component {
         <NavBar />
         <Route name="api" path="/map" component={Map}></Route>
         <Route name="login" path="/login" component={Login}></Route>
+        <Route name="userPage" path="/user/:id" component={UserPage}></Route>
       </div>
     );
   }

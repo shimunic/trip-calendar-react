@@ -1,3 +1,4 @@
 export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 export const USER_UNAUTHORIZED = 'USER_UNAUTHORIZED';
 export const USER_LOGOUT = 'USER_LOGOUT';
+export const USER_UPDATE_DATA = 'USER_UPDATE_DATA';
