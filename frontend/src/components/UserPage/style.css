@@ -9,3 +9,10 @@
 .mb5 {
 margin-bottom: 5px;
 }
+.timelineButton {
+  justify-content: space-between;
+  
+}
+.row:after {
+  display:none;
+}

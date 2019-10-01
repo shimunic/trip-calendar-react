@@ -20,3 +20,9 @@
 .App-link {
   color: #09d3ac;
 }
+
+.switch-wrapper > div {
+  position: absolute;
+  height:100%;
+  width: 100%;
+}

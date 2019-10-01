@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import gmapsInit from '../../utils/gmaps';
 import axios from 'axios';
+
 class Map extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +13,12 @@ class Map extends Component {
       name: 'google-map',
     };
   }
+  componentWillUnmount() {
+    this.source.cancel('Operation canceled by the user.');
+  }
   async componentDidMount() {
+    const CancelToken = axios.CancelToken;
+    this.source = CancelToken.source();
     const google = await gmapsInit();
     navigator.geolocation.getCurrentPosition(position => {
       console.log(position);
@@ -27,7 +33,7 @@ class Map extends Component {
       center: new google.maps.LatLng(this.state.lng, this.state.lat),
     };
     this.setState ({map : new google.maps.Map(element, options)});
-    let markers = (await axios.get('/api/todaylocation')).data;
+    let markers = (await axios.get('/api/todaylocation', { cancelToken: this.source.token })).data;
     console.log(markers);
 
     this.setState ({markers});

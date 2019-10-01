@@ -47,9 +47,9 @@ function dismissProtectedFields(user) {
 
 router.use(updateToken); */
 router.get('/logged', auth, async (req, res) => {
-  console.log(req.user)
+  console.log(req.user);
   console.log(dismissProtectedFields(req.user));
-  
+
   res.json(dismissProtectedFields(req.user));
 });
 
@@ -67,9 +67,9 @@ router.get('/logout', auth, async (req, res) => {
 router
   .route('/user/:_id')
   .get(auth, async (req, res) => {
-    const user = await User.findOne({ _id: req.params._id });
+    const user = await User.findOne({ _id: req.params._id }).lean();
 
-    res.json(user);
+    res.json(dismissProtectedFields(user));
   })
 
   .put(auth, async (req, res) => {
@@ -77,15 +77,46 @@ router
     const user = await User.findOne({ _id: req.params._id });
     user.company = company || user.company;
     user.website = website || user.website;
-    console.log(user.company)
+    console.log(user.company);
     await user.save();
     res.json(dismissProtectedFields(user));
   });
 
 router.get('/timeline/:_id', auth, async (req, res) => {
-  const user = await Timeline.find({ userId: req.params._id });
+  const timeline = await Timeline.find({ userId: req.params._id })
+    .sort({ dateStart: 1 })
+    .lean();
 
-  res.json(user);
+  const alsoTherePromiseArr = [];
+
+  const newTimeline = timeline.map((el) => {
+    const alsoThere = Timeline.find({
+      $and: [
+        { place: el.place },
+        { $and: [{ dateStart: { $lte: el.dateEnd } }, { dateEnd: { $gte: el.dateStart } }] },
+        { userId: { $ne: req.user._id } },
+      ],
+    })
+      .populate('userId')
+      .exec();
+    alsoTherePromiseArr.push(alsoThere);
+    const newEl = {
+      ...el,
+      dateStartStr: el.dateStart.toString().slice(0, 10),
+      dateEndStr: el.dateEnd.toString().slice(0, 10),
+      also: alsoThere,
+    };
+    return newEl;
+  });
+  const alsoThere = await Promise.all(alsoTherePromiseArr);
+  console.log(alsoThere)
+  for (let i = 0; i < newTimeline.length; i++) {
+    newTimeline[i].alsoThere = [];
+    for (let j = 0; j < alsoThere[i].length; j++) {
+      newTimeline[i].alsoThere.push(alsoThere[i][j].userId);
+    }
+  }
+  res.json(newTimeline);
 });
 router.get('/timelineonperiod', async (req, res) => {
   const { dateStart, dateEnd, place: InputPlace } = req.query;
@@ -100,7 +131,6 @@ router.get('/timelineonperiod', async (req, res) => {
       { userId: { $ne: req.user._id } },
     ],
   })
-    .sort({ dateStart: 1 })
     .populate('userId')
     .exec();
 

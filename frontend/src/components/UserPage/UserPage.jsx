@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, TextInput } from 'react-materialize';
+import { NavLink } from 'react-router-dom';
 import TimelineElement from '../TimelineElement/TimelineElement';
 import { connect } from 'react-redux';
 import './style.css';
@@ -8,8 +9,8 @@ class UserPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      company: '',
-      website: '',
+      company: this.props.user.company,
+      website: this.props.user.website,
     };
   }
   inputChanged = e => {
@@ -21,6 +22,13 @@ class UserPage extends Component {
     e.preventDefault();
     updateUser(user._id, { company, website });
   };
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.setState({ company: this.props.user.company, website: this.props.user.website });
+    } else {
+      return null;
+    }
+  }
 
   render() {
     const { user, isPageMy } = this.props;
@@ -45,7 +53,7 @@ class UserPage extends Component {
               onChange={this.inputChanged}
               disabled={!isPageMy}
               label={'Company'}
-              placeholder={user.company}
+              value={this.state.company || ''}
             />
           </form>
         </Row>
@@ -56,12 +64,20 @@ class UserPage extends Component {
               onChange={this.inputChanged}
               disabled={!isPageMy}
               label={'Website'}
-              placeholder={user.website}
+              value={this.state.website || ''}
             />
           </form>
         </Row>
-      <p style={{padding:'10px'}}>Nearest:</p>
-        <TimelineElement />
+
+        <NavLink to={`/timeline/${this.props.user._id}`}>
+          <Row className="timelineButton timeLineCard z-depth-1 grey lighten-5">
+            Timeline
+            <i className="material-icons">keyboard_arrow_right</i>
+          </Row>
+        </NavLink>
+
+        <p style={{ padding: '10px' }}>Nearest:</p>
+        <TimelineElement timeline={user.timeline && user.timeline[0]} />
       </div>
     );
   }

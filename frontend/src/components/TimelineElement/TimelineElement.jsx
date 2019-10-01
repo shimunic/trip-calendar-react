@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux'
 import { Row, Col } from 'react-materialize';
+import UserAvatar from '../Useravatar/UserAvatar'
 import './style.css'
 class TimelineElement extends Component {
   constructor(props) {
@@ -7,23 +9,39 @@ class TimelineElement extends Component {
     this.state = {};
   }
   render() {
+    const {timeline} =this.props
     return (
-        <Row className="timeLineCard z-depth-3 grey lighten-5">
-            <Col s={6} className="valign-wrapper">
-          <img
-            src="https://lh3.googleusercontent.com/-Rmudoi3nTsk/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rcrkDBwvcPUe7TvuEbo-onkb0SjQw/photo.jpg"
-            style={{ height: '75px' }}
-            alt=""
-          />
+      <Row className="timeLineCard z-depth-3 grey lighten-5">
+        <Col s={6} className="valign-wrapper">
+          <img className="cityImage" src={timeline && timeline.src} alt="" />
         </Col>
         <Col className="right-align">
-          <p>Barcelona</p>
-          <p>From: 25 To: 36</p>
-          <p>Also there:</p>
+          <p>{timeline && timeline.place}</p>
+          <p>
+            {timeline && timeline.dateStartStr}-{timeline && timeline.dateEndStr}
+          </p>
+          <p>{timeline && timeline.alsoThere.map((el, index) => <UserAvatar user={el} key={index} />)}</p>
         </Col>
       </Row>
     );
   }
 }
 
-export default TimelineElement;
+function mapStateToProps(store) {
+  return {
+
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TimelineElement);
+
+
