@@ -1,4 +1,4 @@
-# Calendar for people who doing business while over the world
+# Сalendar for people who travel a lot
 ## Features
 You can set you future trips.  
 You can see your friends future trips.  
